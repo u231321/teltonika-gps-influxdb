@@ -63,6 +63,13 @@ class TcpDecoderTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(214, $first->getGpsData()->getAngle());
         $this->assertEquals(4, $first->getGpsData()->getSatellites());
         $this->assertEquals(4, $first->getGpsData()->getSpeed());
+
+        // IO Elements
+        $this->assertEquals(0, $first->getSensorsData()->getEventId());
+        $this->assertEquals(1, $first->getSensorsData()->getUnsignedElement(1));
+        $this->assertEquals(3, $first->getSensorsData()->getUnsignedElement(21));
+        $this->assertEquals(3, $first->getSensorsData()->getUnsignedElement(22));
+        $this->assertEquals(349, $first->getSensorsData()->getUnsignedElement(70));
     }
 
     /** @test */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Uro\TeltonikaFmParser;
 
+use Uro\TeltonikaFmParser\Model\ConfigurationPacket;
 use Uro\TeltonikaFmParser\Exception\InvalidArgumentException;
 
 class TcpEncoder implements Encoder
@@ -24,5 +25,10 @@ class TcpEncoder implements Encoder
         }
 
         return dechex($numberOfRecords);
+    }
+
+    public function encodeConfiguration(ConfigurationPacket $configuration)
+    {
+        return $configuration->encode();
     }
 }

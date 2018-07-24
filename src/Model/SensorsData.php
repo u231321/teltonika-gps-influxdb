@@ -125,7 +125,7 @@ class SensorsData implements JsonSerializable
     {
         return [
             'eventId' => $this->eventId,
-            'elements' => $this->elements 
+            'elements' => array_values($this->elements)
         ];
     }
 }

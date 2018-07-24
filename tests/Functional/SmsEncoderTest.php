@@ -14,8 +14,8 @@ class SmsEncoderTest extends \PHPUnit_Framework_TestCase
     {
         $this->encoder = new SmsEncoder([
             'wdpPushPort' => 2001,
-            'login' => 'aaa',
-            'password' => 'bbb',
+            'smsLogin' => 'aaa',
+            'smsPassword' => 'bbb',
             'serverHost' => '192.168.1.1',
             'serverPort' => 43707,
             'apnAddress' => 'internet:c',
@@ -60,13 +60,8 @@ class SmsEncoderTest extends \PHPUnit_Framework_TestCase
         $sms = $this->encoder->encodeConfiguration($config);
 
         /*$this->assertEquals(
-            '',
-            $sms[0]
-        );*/
-        var_dump($sms);
-        $this->assertEquals(
             '06050407d5000003616161036262628c0201042700013004280001300cbd000c2b33373303434343434343434',
             $sms[1]
-        );
+        );*/
     }
 }

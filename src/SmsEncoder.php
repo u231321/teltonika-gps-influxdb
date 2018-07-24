@@ -3,13 +3,14 @@
 namespace Uro\TeltonikaFmParser;
 
 use Uro\TeltonikaFmParser\Model\ConfigurationPacket;
+use Uro\TeltonikaFmParser\Support\Hexadecimal as Hex;
 
 class SmsEncoder implements Facade\SmsEncoder
 {
     protected $config = [
         'wdpPushPort' => 2005,
         'smsLogin' => '',          // Device identifier (Can be set under SMS > Login using configurator)
-        'password' => '',       // Device password (Can be set under SMS > Password using configurator)
+        'smsPassword' => '',       // Device password (Can be set under SMS > Password using configurator)
         'serverHost' => '',
         'serverPort' => 0,
         'apnAddress' => '',
@@ -21,9 +22,9 @@ class SmsEncoder implements Facade\SmsEncoder
 
     protected $smsLoginLength;
 
-    protected $password;
+    protected $smsPassword;
 
-    protected $passwordLength;
+    protected $smsPasswordLength;
 
     public function __construct(array $config = [])
     {
@@ -34,23 +35,23 @@ class SmsEncoder implements Facade\SmsEncoder
         }
 
 
-        $this->smsLogin = str2hex($this->config['smsLogin']);
-        $this->smsLoginLength = padHex(dechex(strlen($this->smsLogin) / 2), 1);
-        $this->password = str2hex($this->config['password']);
-        $this->passwordLength = padHex(dechex(strlen($this->password) / 2), 1);
+        $this->smsLogin = Hex::fromString($this->config['smsLogin']);
+        $this->smsLoginLength = Hex::fromInteger(strlen($this->smsLogin) / 2)->pad(1);
+        $this->smsPassword = Hex::fromString($this->config['smsPassword']);
+        $this->smsPasswordLength = Hex::fromInteger(strlen($this->smsPassword) / 2)->pad(1);
     }
 
     public function encodePush()
     {
-        $host = str2hex($this->config['serverHost']);
-        $hostLength = padHex(dechex(strlen($host) / 2), 1);
-        $port = padHex(dechex($this->config['serverPort']), 2);
-        $apn = str2hex($this->config['apnAddress']);
-        $apnLength = padHex(dechex(strlen($apn) / 2), 1);
-        $login = str2hex($this->config['gprsLogin']);
-        $loginLength = padHex(dechex(strlen($login) / 2), 1);
-        $password = str2hex($this->config['gprsPassword']);
-        $passwordLength = padHex(dechex(strlen($password) / 2), 1);
+        $host = Hex::fromString($this->config['serverHost']);
+        $hostLength = Hex::fromInteger(strlen($host) / 2)->pad(1);
+        $port = Hex::fromInteger($this->config['serverPort'])->pad(2);
+        $apn = Hex::fromString($this->config['apnAddress']);
+        $apnLength = Hex::fromInteger(strlen($apn) / 2)->pad(1);
+        $login = Hex::fromString($this->config['gprsLogin']);
+        $loginLength = Hex::fromInteger(strlen($login) / 2)->pad(1);
+        $password = Hex::fromString($this->config['gprsPassword']);
+        $passwordLength = Hex::fromInteger(strlen($password) / 2)->pad(1);
 
         return 
             $this->getHeader().
@@ -74,7 +75,7 @@ class SmsEncoder implements Facade\SmsEncoder
         $credentials = $this->getCredentials();
         // Since one SMS can transfer at most 140 bytes, configuration data have to be split into multiple SMS.
         $parts = explode('.', chunk_split($configData, 280 - (6 + strlen($header) + strlen($credentials)), '.'));
-        $totalParts = padHex(dechex(count($parts)), 1);
+        $totalParts = Hex::fromInteger(count($parts))->pad(1);
         
         $sms = [];
         foreach($parts as $id => $part) {
@@ -82,9 +83,9 @@ class SmsEncoder implements Facade\SmsEncoder
                 $sms[] = 
                     $this->getHeader().                 // TP-UDH
                     $this->getCredentials().            // SMS Credentials
-                    padHex($configuration->getId(), 1). // TransferId. Id unique for all messages of single configuration
+                    Hex::fromInteger($configuration->getId())->pad(1). // TransferId. Id unique for all messages of single configuration
                     $totalParts.                    // Total parts
-                    padHex(dechex($id), 1).         // Current part
+                    Hex::fromInteger($id)->pad(1).         // Current part
                     $part;                          // Part of configuration data
             }
         }
@@ -96,7 +97,7 @@ class SmsEncoder implements Facade\SmsEncoder
     {
         return 
             '060504'.
-            padHex(dechex($this->config['wdpPushPort']), 2).
+            Hex::fromInteger($this->config['wdpPushPort'])->pad(2).
             '0000';
     }
 
@@ -105,7 +106,7 @@ class SmsEncoder implements Facade\SmsEncoder
         return
             $this->smsLoginLength.    // Login length
             $this->smsLogin.          
-            $this->passwordLength. // Password length
-            $this->password;       
+            $this->smsPasswordLength. // Password length
+            $this->smsPassword;       
     }
 }

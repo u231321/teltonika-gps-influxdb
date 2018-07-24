@@ -2,6 +2,8 @@
 
 namespace Uro\TeltonikaFmParser\Model;
 
+use Uro\TeltonikaFmParser\Support\Hexadecimal as Hex;
+
 class ConfigurationPacket
 {
     protected $id;
@@ -27,12 +29,12 @@ class ConfigurationPacket
         }
 
         $packet = 
-            padHex($this->id, 1).
-            padHex(dechex(count($this->parameters)), 2).
+            (new Hex($this->id))->pad(1).
+            Hex::fromInteger(count($this->parameters))->pad(2).
             $params;
 
         return 
-            padHex(strlen($packet) / 2, 2).
+            Hex::fromInteger(strlen($packet) / 2)->pad(2).
             $packet;
     }
 }

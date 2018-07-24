@@ -2,6 +2,8 @@
 
 namespace Uro\TeltonikaFmParser\Model;
 
+use Uro\TeltonikaFmParser\Support\Hexadecimal as Hex;
+
 class Parameter
 {
     protected $id;
@@ -19,8 +21,8 @@ class Parameter
         $hexValue = unpack('H*', $this->value)[1];
         
         return 
-            padHex(dechex($this->id), 2).
-            padHex((strlen($hexValue) / 2), 2).
+            Hex::fromInteger($this->id)->pad(2).
+            Hex::fromInteger(strlen($hexValue) / 2)->pad(2).
             $hexValue;
     }
 }

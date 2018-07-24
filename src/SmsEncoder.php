@@ -4,11 +4,11 @@ namespace Uro\TeltonikaFmParser;
 
 use Uro\TeltonikaFmParser\Model\ConfigurationPacket;
 
-class SmsEncoder
+class SmsEncoder implements Facade\SmsEncoder
 {
     protected $config = [
         'wdpPushPort' => 2005,
-        'login' => '',          // Device identifier (Can be set under SMS > Login using configurator)
+        'smsLogin' => '',          // Device identifier (Can be set under SMS > Login using configurator)
         'password' => '',       // Device password (Can be set under SMS > Password using configurator)
         'serverHost' => '',
         'serverPort' => 0,
@@ -17,9 +17,9 @@ class SmsEncoder
         'gprsPassword' => ''
     ];
 
-    protected $login;
+    protected $smsLogin;
 
-    protected $loginLength;
+    protected $smsLoginLength;
 
     protected $password;
 
@@ -34,8 +34,8 @@ class SmsEncoder
         }
 
 
-        $this->login = str2hex($this->config['login']);
-        $this->loginLength = padHex(dechex(strlen($this->login) / 2), 1);
+        $this->smsLogin = str2hex($this->config['smsLogin']);
+        $this->smsLoginLength = padHex(dechex(strlen($this->smsLogin) / 2), 1);
         $this->password = str2hex($this->config['password']);
         $this->passwordLength = padHex(dechex(strlen($this->password) / 2), 1);
     }
@@ -103,8 +103,8 @@ class SmsEncoder
     protected function getCredentials()
     {
         return
-            $this->loginLength.    // Login length
-            $this->login.          
+            $this->smsLoginLength.    // Login length
+            $this->smsLogin.          
             $this->passwordLength. // Password length
             $this->password;       
     }

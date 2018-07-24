@@ -67,7 +67,8 @@ class Data implements Model, JsonSerializable
         return [
             'dateTime' => $this->getDateTime(),
             'priority' => $this->getPriority(),
-            'gpsData' => $this->getGpsData()
+            'gpsData' => $this->getGpsData(),
+            'sensorsData' => $this->getSensorsData(),
         ];
     }
 

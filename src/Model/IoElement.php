@@ -104,8 +104,7 @@ class IoElement implements JsonSerializable
     {
         return [
             'id' => $this->id,
-            'value' => $this->value,
-            'bytes' => $this->bytes
+            'value' => $this->value
         ];
     }
 }

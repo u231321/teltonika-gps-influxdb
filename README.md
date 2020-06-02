@@ -1,78 +1,33 @@
-# Teltonika FM-XXXX Parser 
+# Teltonika FM-XXXX GPS to InfluxDB importer
 
-[![Build Status](https://travis-ci.org/uro/teltonika-fm-parser.svg?branch=master)](https://travis-ci.org/uro/teltonika-fm-parser) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/uro/teltonika-fm-parser/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/uro/teltonika-fm-parser/?branch=master) [![CodeFactor](https://www.codefactor.io/repository/github/uro/teltonika-fm-parser/badge)](https://www.codefactor.io/repository/github/uro/teltonika-fm-parser) [![Latest Stable Version](https://poser.pugx.org/uro/teltonika-fm-parser/v/stable)](https://packagist.org/packages/uro/teltonika-fm-parser) [![Total Downloads](https://poser.pugx.org/uro/teltonika-fm-parser/downloads)](https://packagist.org/packages/uro/teltonika-fm-parser)
+This program reads GPS location and speed from Teltonika GPS-trackers, and saves them into InfluxDB.
 
-This repository is object oriented library to translate Teltonika protocols.
+Run this program somewhere, and configure your Teltonika fleet tracker to send data to your host.
 
-You could use this library in your server, it will help you talk with Teltonika devices.
+## Usage
 
-It was build with [Teltonika protocols v2.10](FMXXXX_Protocols_v2.10.pdf) documentation.
+Example `docker-compose.yml` file:
 
-## Requirements:
-
-```json
-{
-    "require": {
-        "php": ">=7.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^5.7"
-    }
-}
 ```
+version: '2'
 
-## Usage:
+services:
 
-```php
-$parser = new FmParser('tcp');
-
-// Decode IMEI
-$imei = $parser->decodeImei($payload);
-
-// Decode Data Packet
-$packet = $parser->decodeData($payload);
+  importer:
+    build: .
+    container_name: teltonika-importer
+    restart: unless-stopped
+    ports:
+      - "12050:12050"
+    environment:
+      - TIMEZONE=Europe/Helsinki
+      - LISTEN_PORT=12050
+      - ALLOWED_DEVICES=12345678901234 23456789012345 345678901234567
+      - INFLUXDB_SOURCENAME=sourcename
+      - DB_SCHEME=https+influxdb
+      - DB_HOST=influxdb.example.com
+      - DB_PORT=443
+      - DB_NAME=influxdbname
+      - DB_USER=influxdbuser
+      - DB_PASS=influxdbpass
 ```
-
-## Examples
-
-### TCP
-
-```php
-	$parser = new FmParser('tcp');
-	$socket = stream_socket_server("tcp://0.0.0.0:8043", $errno, $errstr);
-	if (!$socket) {
-		throw new \Exception("$errstr ($errno)");
-	} else {
-		while ($conn = stream_socket_accept($socket)) {
-
-			// Read IMEI
-			$payload = fread($conn, 1024);
-			$imei = $parser->decodeImei($payload);
-
-			// Accept packet
-			fwrite($conn, Reply::accept());
-
-			// Decline packet
-			// fwrite($conn, Reply::reject());
-			
-			// Read Data
-			$payload = fread($conn, 1024);
-			$packet = $parser->decodeData($payload);
-
-			// Send acknowledge
-			fwrite($conn, $parser->encodeAcknowledge($packet));
-
-			// Close connection
-			fclose($conn);
-		}
-
-		fclose($socket);
-	}
-}
-```
-
-
-
-## License:
-
-[Public domain](LICENSE.md)

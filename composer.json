@@ -5,7 +5,9 @@
     "require": {
         "php": ">=7.0",
         "mdurrant/php-binary-reader": "^1.0",
-        "mockery/mockery": "^1.2"
+        "mockery/mockery": "^1.2",
+        "influxdb/influxdb-php": "^1.15.0",
+        "vlucas/phpdotenv": "^3.6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7"

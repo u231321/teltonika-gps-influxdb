@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+
+  importer:
+    build: .
+    container_name: teltonika-importer
+    restart: unless-stopped
+    ports:
+      - "12050:12050"
+    environment:
+      - TIMEZONE=Europe/Helsinki
+      - LISTEN_PORT=12050
+      - ALLOWED_DEVICES=12345678901234 23456789012345 345678901234567
+      - INFLUXDB_SOURCENAME=sourcename
+      - DB_SCHEME=https+influxdb
+      - DB_HOST=influxdb.example.com
+      - DB_PORT=443
+      - DB_NAME=influxdbname
+      - DB_USER=influxdbuser
+      - DB_PASS=influxdbpass

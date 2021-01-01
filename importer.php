@@ -36,7 +36,7 @@ if (!$socket) {
   throw new \Exception("$errstr ($errno)");
 } else {
 
-  echo "Starting Teltonika FM-listener...\n";
+  echo "Starting Teltonika RUT955-listener...\n";
 
   while ( $conn = stream_socket_accept( $socket, 600 ) ) {
     echo "New connection arriving...\n";

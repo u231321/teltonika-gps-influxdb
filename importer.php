@@ -88,7 +88,7 @@ if (!$socket) {
       $points[] = new InfluxDB\Point(
         'gps_points',
         null,
-        [ 'source' => $sourceName ],
+        [ 'source' => $imei -> getImei() ],
         [ 'lat' => $gps->getLatitude(), 'lon' => $gps->getLongitude(), 'speed' => $gps->getSpeed() ],
         $timestamp
       );
